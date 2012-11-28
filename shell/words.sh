@@ -50,11 +50,11 @@ fi
 
 # check if spell is installed
 CMD1=`type spell | grep 'not found'`
-echo $CMD > temp
-read CMD < temp
+echo $CMD1 > temp
+read CMD1 < temp
 CMD2=`command -v spell`
-# echo "|$CMD|"
-if [[ ! -z "$CMD" ]] || [[ ! -x $CMD2 ]]; then
+# echo "|$CMD1|"
+if [[ ! -z "$CMD1" ]] || [[ ! -x $CMD2 ]]; then
 	echo "Error: spell is not installed!"
 	exit 1
 fi
