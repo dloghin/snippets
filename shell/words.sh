@@ -13,14 +13,14 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-# This bash script tries to get the steps for transforming one word
-# to another (with the same length). All intermediate word must have
-# the same length, must be valid words and must differ only by one
+# This bash script tries to reconstruct the steps for transforming one 
+# word to another (with the same length). All intermediate words must 
+# have the same length, must be valid and must differ only by one
 # character.
 
 #!/bin/bash
 
-# test if a word is correctly spelled in english
+# tests if a word is correctly spelled in english
 # uses 'spell' application from Linux
 # @param - the word to be checked
 # @return - 1 if the word is valid, 0 - otherwise
@@ -34,7 +34,7 @@ is_valid_word()
 		echo $1 > temp		
 		RET=`spell temp`	
 		rm -r temp
-		if [ -z $RET ]; then
+		if [ ${#RET} -eq 0 ]; then
 			return 1
 		else
 			return 0
@@ -42,7 +42,7 @@ is_valid_word()
 	fi
 }
 
-# the script must take two word as arguments
+# the script takes two words as arguments
 if [ $# -ne 2 ]; then
 	echo "Usage: $0 <word_from> <word_to>"
 	exit 1
@@ -86,7 +86,7 @@ if [ $? -ne 1 ]; then
 fi
 
 # the algorithm:
-# we use a depth first (Lee) search
+# we use a depth first search
 # on each step we search for valid words that have only one different character 
 
 Q=($1)		# words queue
