@@ -217,13 +217,75 @@ void split_v1(char* filename, int lines, int chunks) {
         free(foname);
 }
 
+void extract(char* filename, long size) {
+	unsigned char* buff;
+	char* foname;
+	int i, rd, fid, fod;
+	long diff;
+
+	fid = open(filename, O_RDONLY);
+        if (fid == -1) {
+                perror("Error opening input file");
+                return;
+        }
+	
+	buff = (unsigned char*)malloc(MAX_BUFF);
+        if (!buff) {
+                perror("Error allocating buffer");
+		close(fid);
+                return;
+        }
+
+        i = strlen(filename) + 8;     // allow 8 more chars!
+        printf("Allocate %d chars for output filename!\n", i);
+        foname = (char*)malloc(i);
+        if (!foname) {
+                perror("Error on allocating output filename");
+                free(buff);
+		close(fid);
+                return;
+        }
+	sprintf(foname, "%s-e", filename);
+	fod = open(foname, O_WRONLY | O_CREAT, S_IRUSR | S_IWUSR);
+        if (fod == -1) {
+                perror("Error opening output file");
+                free(foname);
+                free(buff);
+		close(fid);
+                return;
+        }
+
+	printf("Start extracting %ld bytes...\n", size);
+	diff = size;
+	while (diff > 0) {
+		i = (diff > MAX_BUFF) ? MAX_BUFF : diff;
+		rd = read(fid, buff, i);
+		if (rd < i) {
+			printf("Error on reading sufficient bytes (diff = %ld).\n", diff);
+			diff = -1;
+		}
+		else {
+			write(fod, buff, rd);
+			diff -= i;
+		}
+	}
+
+	printf("Done.\n");
+
+	free(foname);
+	free(buff);
+	close(fid);
+	close(fod);
+}
+
 int main(int argc, char** argv) {
 	int chunks = 10;
 	int lines = 0;
+	long size = 0;
 	char* finame = NULL;
 
 	if (argc < 4) {
-		printf("Usage: %s <input_file> <chunks> -b | -l [lines]\n\t-b split file based on size (bytes)\n\t-l split file based on number of lines\n", argv[0]);
+		printf("Usage: %s <input_file> <chunks> -b | -l [lines] | -e <size>\n\t-b split file based on size (bytes)\n\t-l split file based on number of lines\n\t-e extract first <size> bytes (<chunks> can take any value)\n", argv[0]);
 		return -1;
 	}
 
@@ -246,6 +308,15 @@ int main(int argc, char** argv) {
 		split_v2(finame, lines, chunks);
 		printf("\nDone.\n");
 
+		break;
+	case 'e':
+		if (argc > 4) {
+			size = atol(argv[4]);
+                } else {
+			printf("No extracting size given!\n");
+			return -1;
+                }
+		extract(finame, size);
 		break;
 	default:
 		printf("Unsupported option %s\n", argv[3]);
