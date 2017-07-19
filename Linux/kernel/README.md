@@ -92,6 +92,8 @@ Reboot the board into normal mode (you may remove the USB cable)
 
 [Patch inspiration](http://www.jarzebski.pl/files/jetsontk1/patch/patch-19.3-giduid_fix.diff)
 
+[Docker on Tegra Systems](https://github.com/Technica-Corporation/Tegra-Docker)
+
 [How to build your own kernel for Jetson TK1](https://devtalk.nvidia.com/default/topic/762653/-howto-build-own-kernel-for-jetson-tk1)
 
 [On the error running DeviceCreate at Docker installation](https://github.com/moby/moby/issues/6325)
